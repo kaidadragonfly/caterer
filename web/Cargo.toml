@@ -1,0 +1,9 @@
+[package]
+name = "web"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+axum = { version = "0.8.1" }
+kitchen = { path = "../kitchen" }                        
+tokio = { version = "1.43.0", features = ["full"] }

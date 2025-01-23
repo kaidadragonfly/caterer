@@ -1,5 +1,11 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
+pub async fn parse(url: &str) -> Result<(), Box<dyn std::error::Error>> {
+    let resp = reqwest::get(url)
+        .await?
+        .bytes()
+        .await?;
+    let feed = feed_rs::parser::parse(resp.as_ref()).unwrap();
+    println!("{feed:#?}");
+    Ok(())
 }
 
 #[cfg(test)]
