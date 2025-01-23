@@ -1,4 +1,21 @@
+use axum::{
+    routing::get,
+    Router,
+};
+
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    kitchen::parse("https://xkcd.com/rss.xml").await
+async fn main() {
+    // build our application with a single route
+    let app = Router::new().route("/", get(root));
+
+    // run our app with hyper, listening globally on port 3000
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
+    axum::serve(listener, app).await.unwrap();
+}
+
+async fn root() {
+    match kitchen::parse("https://xkcd.com/rss.xml").await {
+        Ok(_) => (),
+        Err(error) => panic!("{error:?}"),
+    }
 }
