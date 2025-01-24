@@ -1,20 +1,26 @@
-pub async fn parse(url: &str) -> Result<(), Box<dyn std::error::Error>> {
+use std::error::Error;
+
+use feed_rs::{
+    parser,
+    model::Feed,
+};
+
+
+pub async fn refresh_feed(url: &str) -> Result<Feed, Box<dyn Error>> {
     let resp = reqwest::get(url)
         .await?
         .bytes()
         .await?;
-    let feed = feed_rs::parser::parse(resp.as_ref()).unwrap();
-    println!("{feed:#?}");
-    Ok(())
+    Ok(parser::parse(resp.as_ref())?)
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    // use super::*;
 
     #[test]
     fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+        // let result = add(2, 2);
+        // assert_eq!(result, 4);
     }
 }

@@ -1,4 +1,7 @@
+use cercis::prelude::*;
+use feed_rs::model::Feed;
 use axum::{
+    response::Html,
     routing::get,
     Router,
 };
@@ -13,9 +16,14 @@ async fn main() {
     axum::serve(listener, app).await.unwrap();
 }
 
-async fn root() {
-    match kitchen::parse("https://xkcd.com/rss.xml").await {
-        Ok(_) => (),
-        Err(error) => panic!("{error:?}"),
+async fn root<'a>() -> Html<String> {
+    match kitchen::refresh_feed("https://xkcd.com/rss.xml").await {
+        Ok(feed) => render(feed),
+        Err(error) => panic!("{error:?}")
     }
+}
+
+fn render(feed: Feed) -> Html<String> {
+    let f = format!("{feed:#?}");
+    Html(rsx!(p {"{f}"}).render())
 }

@@ -4,7 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+feed-rs.workspace = true
 axum = "0.8.1"
 tokio.version = "1.43.0"
 tokio.features = ["full"]
 kitchen.path = "../kitchen"
+cercis = "1.2.1"

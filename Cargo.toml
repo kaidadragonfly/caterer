@@ -1,3 +1,6 @@
 [workspace]
 members = ["web", "kitchen"]
 resolver = "2"
+
+[workspace.dependencies]
+feed-rs = "2.3.1"
