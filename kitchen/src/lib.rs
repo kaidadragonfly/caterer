@@ -1,16 +1,9 @@
 use std::error::Error;
 
-use feed_rs::{
-    parser,
-    model::Feed,
-};
-
+use feed_rs::{model::Feed, parser};
 
 pub async fn refresh_feed(url: &str) -> Result<Feed, Box<dyn Error>> {
-    let resp = reqwest::get(url)
-        .await?
-        .bytes()
-        .await?;
+    let resp = reqwest::get(url).await?.bytes().await?;
     Ok(parser::parse(resp.as_ref())?)
 }
 

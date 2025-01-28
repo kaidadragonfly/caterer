@@ -4,16 +4,48 @@ use feed_rs::model;
 use tower_livereload::LiveReloadLayer;
 
 #[component]
-fn Feed(entries: Vec<model::Entry>) -> Element {
-    let f = format!("{entries:#?}");
-    rsx!(p {
-        class: "feed",
-        "{f}"
+fn Feed(feed: model::Feed) -> Element {
+    let href = match &feed.links[..] {
+        [l] | [l, ..] => Some(l.clone().href),
+        _ => None,
+    };
+    let entries = format!("{:#?}", feed.entries);
+    let description = match feed.description {
+        Some(ref t) => match href {
+            Some(href) => rsx!(p {
+                a {
+                    href: "{href}",
+
+                    "{t.content}"
+                }
+            }),
+            None => rsx!(p { "{t.content}" }),
+        },
+        _ => rsx!(),
+    };
+
+    rsx!(
+    section {
+        h2 {
+            "FEED title!"
+        }
+        description
+            p {
+                class: "feed",
+
+                "{entries}"
+            }
     })
 }
 
-// #[component]
-// fn Entry(entry: model::Entry) -> Element {}
+#[component]
+fn Entry(entry: model::Entry) -> Element {
+    let title = match entry.title {
+        Some(ref t) => rsx!(h3 {"{t.content} : Caterer"}),
+        _ => rsx!(title {"Caterer"}),
+    };
+    title
+}
 
 // mod components;
 // use components::Feed;
@@ -42,29 +74,10 @@ async fn root<'a>() -> Html<String> {
 }
 
 fn render(feed: model::Feed) -> Html<String> {
-    let title = match feed.title {
-        Some(ref t) => rsx!(title {"{t.content} : Caterer"}),
-        _ => rsx!(title {"Caterer"}),
+    let title = match &feed.title {
+        Some(t) => t.content.clone(),
+        None => "Untitled".to_string(),
     };
-    let href = match &feed.links[..] {
-        [l] | [l, ..] => Some(l.clone().href),
-        _ => None,
-    };
-    let description = match feed.description {
-        Some(ref t) => match href {
-            Some(href) => rsx!(p {
-                a {
-                    href: "{href}",
-
-                    "{t.content}"
-                }
-            }),
-            None => rsx!(p { "{t.content}" }),
-        },
-        _ => rsx!(),
-    };
-
-    dbg!(feed.clone());
 
     Html(
         rsx!(
@@ -72,13 +85,20 @@ fn render(feed: model::Feed) -> Html<String> {
         html {
             head {
                 meta { charset: "UTF-8" }
-                title
+                title { "{title}" }
             }
             body {
-                description
-
+                h1 {
+                    "Caterer"
+                }
+                nav {
+                    h2 {
+                        "Feeds"
+                    }
+                    "{title}"
+                }
                 Feed {
-                    entries: feed.entries
+                    feed: feed
                 }
             }
         })
