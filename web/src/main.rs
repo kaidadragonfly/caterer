@@ -3,52 +3,9 @@ use cercis::prelude::*;
 use feed_rs::model;
 use tower_livereload::LiveReloadLayer;
 
-#[component]
-fn Feed(feed: model::Feed) -> Element {
-    let href = match &feed.links[..] {
-        [l] | [l, ..] => Some(l.clone().href),
-        _ => None,
-    };
-    let entries = format!("{:#?}", feed.entries);
-    let description = match feed.description {
-        Some(ref t) => match href {
-            Some(href) => rsx!(p {
-                a {
-                    href: "{href}",
+mod components;
+use components::Feed;
 
-                    "{t.content}"
-                }
-            }),
-            None => rsx!(p { "{t.content}" }),
-        },
-        _ => rsx!(),
-    };
-
-    rsx!(
-    section {
-        h2 {
-            "FEED title!"
-        }
-        description
-            p {
-                class: "feed",
-
-                "{entries}"
-            }
-    })
-}
-
-#[component]
-fn Entry(entry: model::Entry) -> Element {
-    let title = match entry.title {
-        Some(ref t) => rsx!(h3 {"{t.content} : Caterer"}),
-        _ => rsx!(title {"Caterer"}),
-    };
-    title
-}
-
-// mod components;
-// use components::Feed;
 #[tokio::main]
 async fn main() {
     // build our application with a single route
