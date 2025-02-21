@@ -10,4 +10,4 @@ tokio.version = "1.43.0"
 tokio.features = ["full"]
 kitchen.path = "../kitchen"
 cercis = "1.2.1"
-tower-livereload = "0.9.5"
+tower-livereload = "0.9.6"
